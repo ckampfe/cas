@@ -92,4 +92,12 @@ defmodule Cas.Atom do
       swap!(atom, f, args)
     end
   end
+
+  @doc """
+  Delete this atom.
+  Subsequent calls to `get`, `swap`, etc., will fail.
+  """
+  def delete(atom) do
+    :ets.delete(@table, atom.id)
+  end
 end
