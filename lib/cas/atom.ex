@@ -1,12 +1,18 @@
 defmodule Cas.Atom do
   @table :cas_atom_table
 
+  @derive {Inspect, except: [:id]}
   @enforce_keys [:id]
   defstruct [:id]
 
   @doc """
   Create a new atom.
   Must be initialized with a value.
+
+  ## Examples
+
+    iex> Cas.Atom.new(1)
+    #Cas.Atom<...>
   """
   def new(value) do
     id = System.unique_integer()
@@ -18,6 +24,12 @@ defmodule Cas.Atom do
 
   @doc """
   Get the current value of the atom.
+
+  ## Examples
+
+    iex> atom = Cas.Atom.new(1)
+    iex> Cas.Atom.get(atom)
+    1
   """
   def get(atom) do
     [{_, value}] = :ets.lookup(@table, atom.id)
@@ -28,6 +40,12 @@ defmodule Cas.Atom do
   Atomically swaps the value of the atom to be `f.(current_value)`.
   Note that `f` may be run multiple times, so it must not cause side effects.
   Returns the new value of the atom.
+
+  ## Examples
+
+    iex> atom = Cas.Atom.new(1)
+    iex> Cas.Atom.swap!(atom, fn v -> v + 99 end)
+    100
   """
   def swap!(%__MODULE__{id: id} = atom, f, args \\ nil) do
     [{^id, old_value} = old_kv] = :ets.lookup(@table, id)
@@ -58,6 +76,12 @@ defmodule Cas.Atom do
   @doc """
   set the atom's value to `value`.
   returns `value`
+
+  ## Examples
+
+    iex> atom = Cas.Atom.new(1)
+    iex> Cas.Atom.reset!(atom, "hello")
+    "hello"
   """
   def reset!(atom, value) do
     :ets.insert(@table, {atom.id, value})
@@ -66,6 +90,12 @@ defmodule Cas.Atom do
 
   @doc """
   Like `swap!`, but returns the previous and the new value of the atom.
+
+  ## Examples
+
+    iex> atom = Cas.Atom.new(1)
+    iex> Cas.Atom.swap_old_and_new!(atom, fn v -> v + 99 end)
+    {1, 100}
   """
   def swap_old_and_new!(%__MODULE__{id: id} = atom, f, args \\ nil) do
     [{^id, old_value} = old_kv] = :ets.lookup(@table, id)
@@ -96,6 +126,12 @@ defmodule Cas.Atom do
   @doc """
   Delete this atom.
   Subsequent calls to `get`, `swap`, etc., will fail.
+
+  ## Examples
+
+    iex> atom = Cas.Atom.new(1)
+    iex> Cas.Atom.delete(atom)
+    true
   """
   def delete(atom) do
     :ets.delete(@table, atom.id)
