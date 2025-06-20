@@ -1,9 +1,13 @@
 # Cas
 
+
+
 Provides `Cas.Atom`, a direct analog to Clojure's [atom](https://clojure.org/reference/atoms), to provide (as Clojure says) "a way to manage shared, synchronous, independent state".
 
 An atom is as an alternative to Elixir's [Agent](https://hexdocs.pm/elixir/1.18.4/Agent.html), or building your own GenServer to manage a piece of state. It's specifically useful when you have a piece of state that you want to share between and update from a number of processes.
 
+
+[![Elixir CI](https://github.com/ckampfe/cas/actions/workflows/elixir.yml/badge.svg)](https://github.com/ckampfe/cas/actions/workflows/elixir.yml)
 
 ## Examples
 
