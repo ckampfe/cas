@@ -25,7 +25,10 @@ Atom.get(atom)
 # atomic and isolated.
 #
 # This means that an arbitrary number of processes can be swapping
-# things into the atom concurrently, and the
+# things into the atom concurrently, and they will always update the atom atomically.
+# More concretely, this means the value passed to `f` will never be outdated.
+# The value returned by `f` will always be derived from the most recent value of the atom,
+# uncorrupted by other concurrent writers.
 Atom.swap!(atom, fn i -> i + 1 end)
 #=> 2
 Atom.swap!(atom, fn i -> i + 1 end)
