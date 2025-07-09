@@ -7,7 +7,13 @@ defmodule Cas.Application do
 
   @impl true
   def start(_type, _args) do
-    :ets.new(:cas_atom_table, [:named_table, :set, :public])
+    :ets.new(:cas_atom_table, [
+      :named_table,
+      :set,
+      :public,
+      read_concurrency: true,
+      write_concurrency: :auto
+    ])
 
     children = [
       # Starts a worker by calling: Cas.Worker.start_link(arg)
