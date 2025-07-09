@@ -1,9 +1,9 @@
 defmodule Cas.Atom do
   @table :cas_atom_table
 
-  @derive {Inspect, except: [:id]}
-  @enforce_keys [:id]
-  defstruct [:id]
+  @derive {Inspect, except: [:id, :table]}
+  @enforce_keys [:id, :table]
+  defstruct [:id, :table]
 
   @doc """
   Create a new atom.
@@ -14,12 +14,12 @@ defmodule Cas.Atom do
     iex> Cas.Atom.new(1)
     #Cas.Atom<...>
   """
-  def new(value) do
+  def new(value, table \\ @table) do
     id = System.unique_integer()
 
-    :ets.insert(@table, {id, value})
+    :ets.insert(table, {id, value})
 
-    %__MODULE__{id: id}
+    %__MODULE__{id: id, table: table}
   end
 
   @doc """
@@ -31,8 +31,8 @@ defmodule Cas.Atom do
     iex> Cas.Atom.get(atom)
     1
   """
-  def get(atom) do
-    [{_, value}] = :ets.lookup(@table, atom.id)
+  def get(%__MODULE__{id: id, table: table}) do
+    [{_, value}] = :ets.lookup(table, id)
     value
   end
 
@@ -47,8 +47,8 @@ defmodule Cas.Atom do
     iex> Cas.Atom.swap!(atom, fn v -> v + 99 end)
     100
   """
-  def swap!(%__MODULE__{id: id} = atom, f, args \\ nil) do
-    [{^id, old_value} = old_kv] = :ets.lookup(@table, id)
+  def swap!(%__MODULE__{id: id, table: table} = atom, f, args \\ nil) do
+    [{^id, old_value} = old_kv] = :ets.lookup(table, id)
 
     new_value =
       if args do
@@ -62,7 +62,7 @@ defmodule Cas.Atom do
     successful_swap? =
       1 ==
         :ets.select_replace(
-          @table,
+          table,
           [{old_kv, [], [{:const, new_kv}]}]
         )
 
@@ -83,8 +83,8 @@ defmodule Cas.Atom do
     iex> Cas.Atom.reset!(atom, "hello")
     "hello"
   """
-  def reset!(atom, value) do
-    :ets.insert(@table, {atom.id, value})
+  def reset!(%__MODULE__{id: id, table: table}, value) do
+    :ets.insert(table, {id, value})
     value
   end
 
@@ -97,8 +97,8 @@ defmodule Cas.Atom do
     iex> Cas.Atom.swap_old_and_new!(atom, fn v -> v + 99 end)
     {1, 100}
   """
-  def swap_old_and_new!(%__MODULE__{id: id} = atom, f, args \\ nil) do
-    [{^id, old_value} = old_kv] = :ets.lookup(@table, id)
+  def swap_old_and_new!(%__MODULE__{id: id, table: table} = atom, f, args \\ nil) do
+    [{^id, old_value} = old_kv] = :ets.lookup(table, id)
 
     new_value =
       if args do
@@ -112,7 +112,7 @@ defmodule Cas.Atom do
     successful_swap? =
       1 ==
         :ets.select_replace(
-          @table,
+          table,
           [{old_kv, [], [{:const, new_kv}]}]
         )
 
@@ -133,7 +133,7 @@ defmodule Cas.Atom do
     iex> Cas.Atom.delete(atom)
     true
   """
-  def delete(atom) do
-    :ets.delete(@table, atom.id)
+  def delete(%__MODULE__{id: id, table: table}) do
+    :ets.delete(table, id)
   end
 end
