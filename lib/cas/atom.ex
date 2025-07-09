@@ -11,8 +11,8 @@ defmodule Cas.Atom do
 
   ## Examples
 
-    iex> Cas.Atom.new(1)
-    #Cas.Atom<...>
+      iex> Cas.Atom.new(1)
+      #Cas.Atom<...>
   """
   def new(value, table \\ @table) do
     id = System.unique_integer()
@@ -27,9 +27,9 @@ defmodule Cas.Atom do
 
   ## Examples
 
-    iex> atom = Cas.Atom.new(1)
-    iex> Cas.Atom.get(atom)
-    1
+      iex> atom = Cas.Atom.new(1)
+      iex> Cas.Atom.get(atom)
+      1
   """
   def get(%__MODULE__{id: id, table: table}) do
     [{_, value}] = :ets.lookup(table, id)
@@ -43,9 +43,9 @@ defmodule Cas.Atom do
 
   ## Examples
 
-    iex> atom = Cas.Atom.new(1)
-    iex> Cas.Atom.swap!(atom, fn v -> v + 99 end)
-    100
+      iex> atom = Cas.Atom.new(1)
+      iex> Cas.Atom.swap!(atom, fn v -> v + 99 end)
+      100
   """
   def swap!(%__MODULE__{id: id, table: table} = atom, f, args \\ nil) do
     [{^id, old_value} = old_kv] = :ets.lookup(table, id)
@@ -79,9 +79,9 @@ defmodule Cas.Atom do
 
   ## Examples
 
-    iex> atom = Cas.Atom.new(1)
-    iex> Cas.Atom.reset!(atom, "hello")
-    "hello"
+      iex> atom = Cas.Atom.new(1)
+      iex> Cas.Atom.reset!(atom, "hello")
+      "hello"
   """
   def reset!(%__MODULE__{id: id, table: table}, value) do
     :ets.insert(table, {id, value})
@@ -93,9 +93,9 @@ defmodule Cas.Atom do
 
   ## Examples
 
-    iex> atom = Cas.Atom.new(1)
-    iex> Cas.Atom.swap_old_and_new!(atom, fn v -> v + 99 end)
-    {1, 100}
+      iex> atom = Cas.Atom.new(1)
+      iex> Cas.Atom.swap_old_and_new!(atom, fn v -> v + 99 end)
+      {1, 100}
   """
   def swap_old_and_new!(%__MODULE__{id: id, table: table} = atom, f, args \\ nil) do
     [{^id, old_value} = old_kv] = :ets.lookup(table, id)
@@ -129,9 +129,9 @@ defmodule Cas.Atom do
 
   ## Examples
 
-    iex> atom = Cas.Atom.new(1)
-    iex> Cas.Atom.delete(atom)
-    true
+      iex> atom = Cas.Atom.new(1)
+      iex> Cas.Atom.delete(atom)
+      true
   """
   def delete(%__MODULE__{id: id, table: table}) do
     :ets.delete(table, id)
