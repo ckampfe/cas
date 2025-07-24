@@ -37,7 +37,7 @@ defmodule Cas.Cell do
   end
 
   @doc """
-  Cellically swaps the value of the cell to be `f.(current_value)`.
+  Atomically swaps the value of the cell to be `f.(current_value)`.
   Note that `f` may be run multiple times, so it must not cause side effects.
   Returns the new value of the cell.
 
