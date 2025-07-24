@@ -7,7 +7,7 @@ defmodule Cas.Application do
 
   @impl true
   def start(_type, _args) do
-    :ets.new(:cas_atom_table, [
+    :ets.new(:cas_cell_table, [
       :named_table,
       :set,
       :public,
