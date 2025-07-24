@@ -26,10 +26,10 @@ Cell.get(cell)
 # This is free from race conditions between the read of the current
 # value and writing to the current value, because the
 # underlying ETS API guarantees that `select_replace/2` is
-# cellic and isolated.
+# atomic and isolated.
 #
 # This means that an arbitrary number of processes can be swapping
-# things into the cell concurrently, and they will always update the cell cellically.
+# things into the cell concurrently, and they will always update the cell atomically.
 # More concretely, this means the value passed to `f` will never be outdated.
 # The value returned by `f` will always be derived from the most recent value of the cell,
 # uncorrupted by other concurrent writers.
@@ -53,8 +53,8 @@ Cell.delete(cell)
 
 ## More detail
 
-`Cas.Cell` uses ETS rather than processes, so it avoids the overhead of process mailboxes and message sends in favor of cellic compare-and-swaps in ETS itself.
+`Cas.Cell` uses ETS rather than processes, so it avoids the overhead of process mailboxes and message sends in favor of atomic compare-and-swaps in ETS itself.
 
-This is possible because ETS provides a mechanism to do cellic compare-and-swap via [select_replace/2](https://www.erlang.org/doc/apps/stdlib/ets.html#select_replace/2). I only recently discovered that ETS provided this functionality, and once I did I knew I had to build this.
+This is possible because ETS provides a mechanism to do atomic compare-and-swap via [select_replace/2](https://www.erlang.org/doc/apps/stdlib/ets.html#select_replace/2). I only recently discovered that ETS provided this functionality, and once I did I knew I had to build this.
 
 Because `Cas.Cell` uses ETS, unused cells will leak if they are not deleted, since they correspond 1:1 with rows in an ETS table.
