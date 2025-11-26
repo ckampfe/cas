@@ -46,13 +46,17 @@ defmodule Cas.Cell do
       iex> cell = Cas.Cell.new(1)
       iex> Cas.Cell.swap!(cell, fn v -> v + 99 end)
       100
+
+      iex> cell = Cas.Cell.new(1)
+      iex> Cas.Cell.swap!(cell, fn v, a, b, c -> v + a + b + c end, [4, 5, 6])
+      16
   """
   def swap!(%__MODULE__{id: id, table: table} = cell, f, args \\ nil) do
     [{^id, old_value} = old_kv] = :ets.lookup(table, id)
 
     new_value =
       if args do
-        f.(old_value, args)
+        apply(f, [old_value | args])
       else
         f.(old_value)
       end
@@ -96,13 +100,17 @@ defmodule Cas.Cell do
       iex> cell = Cas.Cell.new(1)
       iex> Cas.Cell.swap_old_and_new!(cell, fn v -> v + 99 end)
       {1, 100}
+
+      iex> cell = Cas.Cell.new(1)
+      iex> Cas.Cell.swap_old_and_new!(cell, fn v, a, b, c -> v + a + b + c end, [4, 5, 6])
+      {1, 16}
   """
   def swap_old_and_new!(%__MODULE__{id: id, table: table} = cell, f, args \\ nil) do
     [{^id, old_value} = old_kv] = :ets.lookup(table, id)
 
     new_value =
       if args do
-        f.(old_value, args)
+        apply(f, [old_value | args])
       else
         f.(old_value)
       end
