@@ -48,13 +48,7 @@ defmodule CellTest do
     output_list =
       Enum.map(1..100, fn _i ->
         Task.async(fn ->
-          Cas.Cell.swap!(cell, fn previous ->
-            # 11-21ms of random sleep.
-            # when using Cas.Cell, you'd never put a side effect in here
-            # like this, but this is a demonstration
-            :timer.sleep(:rand.uniform(10) + 10)
-            previous + 1
-          end)
+          Cas.Cell.swap!(cell, fn previous -> previous + 1 end)
         end)
       end)
       |> Enum.map(fn task -> Task.await(task) end)
