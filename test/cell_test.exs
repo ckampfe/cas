@@ -23,13 +23,7 @@ defmodule CellTest do
             # normally you would use :ets.update_counter for incrementing an int,
             # but Cas.Cell is designed for complex data updates, not just incrementing ints,
             # but this is a demonstration that a read-write of ETS is not atomic
-            # unless you use the correct API
             true = :ets.insert(:cas_test_table, {:value, previous_i + 1})
-
-            # 11-21ms of random sleep to represent
-            # other work/latency happening between the read
-            # and the subsequent write
-            :timer.sleep(:rand.uniform(10) + 10)
 
             [{:value, updated_i}] = :ets.lookup(:cas_test_table, :value)
             updated_i
